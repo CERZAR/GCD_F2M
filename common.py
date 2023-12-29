@@ -1,8 +1,5 @@
 import argparse
 import subprocess
-from typing import List
-
-import numpy as np
 
 from polynomials_generation import GenerateDatasets
 
@@ -12,6 +9,10 @@ CONSOLE_MODE = 'console'
 DEGREE_FILE = 'data/degrees.txt'
 AMOUNT_FILE = 'data/amount.txt'
 POLYNOMIALS_FILE = 'data/polynomials.txt'
+
+THREADS_PER_BLOCK = (16, 16)
+BLOCKS_PER_GRID = (32, 32)
+
 P = 2
 M = 4
 
@@ -35,7 +36,9 @@ def get_polynomials(implementation: str):
     args = parser.parse_args()
 
     if args.degree is None or args.amount is None:
-        subprocess.run(['python', 'polynomials_generation.py'])
+        if implementation == 's':
+            subprocess.run(['python', 'polynomials_generation.py'])
+        # subprocess.run(['python', 'polynomials_generation.py'])
         args.mode = CONSOLE_MODE
     else:
         GenerateDatasets.generate_dataset(args.degree, args.amount)
@@ -46,19 +49,6 @@ def get_polynomials(implementation: str):
     polynomials_amount = len(polynomials)
 
     return polynomials, polynomial_degree, polynomials_amount, args.mode
-
-
-def reduction_polynomials(polynomials: List[List[int]]) -> List[int]:
-    coef_max_degree = len(polynomials[0])
-    poly_max_degree = len(polynomials) - 1
-    result = [0] * (coef_max_degree + poly_max_degree)
-
-    for i, poly in enumerate(polynomials):
-        for j, value in enumerate(poly):
-            pos = i + j
-            result[pos] = (result[pos] + value) % P
-
-    return result
 
 
 def log_results(mode, performance_results, gcd):

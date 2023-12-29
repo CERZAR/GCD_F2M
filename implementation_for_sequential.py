@@ -1,17 +1,7 @@
 import time
 import numpy as np
 from PolynomialOperations import PolynomialOperations
-from common import get_polynomials, log_results, reduction_polynomials
-
-
-def process_polynomials(res, polynomials_copy, polynomial_id):
-    if polynomial_id < polynomials_copy.shape[0]:
-        PolynomialOperations.calculate_polynomial_gcd(
-            polynomials_copy[2 * polynomial_id],
-            polynomials_copy[2 * polynomial_id + 1],
-            res,
-            polynomial_id
-        )
+from common import get_polynomials, log_results
 
 
 def main():
@@ -20,8 +10,7 @@ def main():
 
     start_time = time.time()
 
-    polynomials = [reduction_polynomials(poly) for poly in polynomials]
-    polynomials = np.array(polynomials)
+    polynomials = np.array([PolynomialOperations.polynomial_reduction_cpu(poly) for poly in polynomials])
 
     while len(polynomials) > 1:
 
@@ -33,7 +22,7 @@ def main():
         results = results.copy()
 
         for i in range(len(polynomials) // 2):
-            process_polynomials(results, polynomials_copy, i)
+            PolynomialOperations.process_polynomials_cpu(results, polynomials_copy, i)
         polynomials = results.copy()
 
     work_time = time.time() - start_time
