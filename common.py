@@ -36,9 +36,7 @@ def get_polynomials(implementation: str):
     args = parser.parse_args()
 
     if args.degree is None or args.amount is None:
-        if implementation == 's':
-            subprocess.run(['python', 'polynomials_generation.py'])
-        # subprocess.run(['python', 'polynomials_generation.py'])
+        subprocess.run(['python', 'polynomials_generation.py'])
         args.mode = CONSOLE_MODE
     else:
         GenerateDatasets.generate_dataset(args.degree, args.amount)

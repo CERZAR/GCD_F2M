@@ -5,9 +5,9 @@ SCRIPT_SEQUENTIAL = 'implementation_for_sequential.py'
 SCRIPT_PARALLEL = 'implementation_for_cuda_parallel.py'
 SCRIPT_PLOT_MAKER = 'gcd_algorithms_performance.py'
 
-DEGREE_CONSTANTS = [(5000, 60)]
-DEGREES = [10, 20, 30, 40, 50, 60, 70]
-AMOUNTS = [10, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000, 3000, 4000, 5000, 6000]
+DEGREE_CONSTANTS = [(3500, 70)]
+DEGREES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+AMOUNTS = [10, 100, 250, 500, 1000, 1500, 2000, 3000, 4000, 5000]
 
 
 def run_command(script, degree, amount, mode=None):
