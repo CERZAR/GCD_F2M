@@ -2,7 +2,40 @@ from typing import List
 import numpy as np
 from numba import cuda, float64
 
+from FieldBuilder import FieldBuilder
 from common import P, BLOCKS_PER_GRID, THREADS_PER_BLOCK
+
+
+def calculate_gcd_sequential(polynomials):
+    while len(polynomials) > 1:
+
+        if len(polynomials) % 2 != 0:
+            polynomials = np.vstack((polynomials, polynomials[-1]))
+
+        polynomials_copy = polynomials.copy()
+        results = np.array(polynomials[0:(len(polynomials)) // 2])
+        results = results.copy()
+
+        for i in range(len(polynomials) // 2):
+            PolynomialOperations.process_polynomials_cpu(results, polynomials_copy, i)
+        polynomials = results.copy()
+
+    return polynomials[0]
+
+
+def calculate_gcd_parallel(polynomials):
+    while len(polynomials) > 1:
+
+        if len(polynomials) % 2 != 0:
+            polynomials = np.vstack((polynomials, polynomials[-1]))
+
+        cudapolynomials = cuda.to_device(polynomials)
+        results = np.array(polynomials[0:(len(polynomials)) // 2])
+        results = cuda.to_device(results)
+        PolynomialOperations.process_polynomials_gpu.forall(len(polynomials) // 2)(results, cudapolynomials)
+        polynomials = results.copy_to_host()
+
+    return polynomials[0]
 
 
 class PolynomialOperations:
@@ -139,8 +172,25 @@ class PolynomialOperations:
             for j, value in enumerate(poly):
                 pos = i + j
                 result[pos] = (result[pos] + value) % P
-
         return result
+
+    @classmethod
+    def uncover_alphas(cls, m, polynomials: List[List[int]]) -> List[List[int]]:
+        fb = FieldBuilder(m)
+
+        # Неприводимый полином
+        irreducible_polynomial = fb.calculate_irreducible_polynomial()
+
+        # Коэффициенты alpha относительно неприводимого полинома
+        alphas_dict = fb.calculate_alphas_dict(irreducible_polynomial)
+
+        res = []
+        for poly in polynomials:
+            temp_poly = poly.copy()
+            for i, v in enumerate(poly):
+                temp_poly[i] = alphas_dict[v]
+                res.append(temp_poly)
+        return res
 
     @staticmethod
     @cuda.jit
@@ -157,7 +207,7 @@ class PolynomialOperations:
 
 @cuda.jit
 def calculate_polynomial_gcd_gpu(f, g, gcd, polynomial_id):
-    shape = 2000
+    shape = 5000
     m = len(f) - 1
     n = len(g) - 1
     p0, p1 = (f, g) if m >= n else (g, f)
