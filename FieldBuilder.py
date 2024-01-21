@@ -142,10 +142,10 @@ class FieldBuilder:
         alpha_max_value = irreducible_polynomial.copy()
         alpha_max_value[-1] = 0
 
-        alpha_dict = {
-            0: [0] * (self.m + 1),
-            1: [1] + [0] * self.m,
-        }
+        alpha_dict = [
+            [0] * (self.m + 1),
+            [1] + [0] * self.m
+        ]
 
         for alpha_degree in range(2, alpha_max_degree):
             temp_poly = alpha_dict[alpha_degree - 1][:]
@@ -159,9 +159,9 @@ class FieldBuilder:
                 temp_poly = [a ^ b for a, b in zip(temp_poly, alpha_max_value)]
                 temp_poly[-1] = 0
 
-            alpha_dict[alpha_degree] = temp_poly
+            alpha_dict.append(temp_poly)
 
-        for poly in alpha_dict.values():
+        for poly in alpha_dict:
             poly.pop()
 
         return alpha_dict

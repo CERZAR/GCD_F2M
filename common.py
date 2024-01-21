@@ -61,8 +61,7 @@ def log_results(mode, performance_results, gcd):
             file.write(f'{performance_results}\n')
     elif mode == CONSOLE_MODE:
         implementation = 'последовательная на CPU' if performance_results[0] == 's' else 'параллельная на GPU'
-        print("Реализация алгоритма: ", implementation)
-        print("F2^m, m=", performance_results[4])
+        print(f"Реализация алгоритма в поле F2^{performance_results[4]}: {implementation}")
         print("Степень полиномов: ", performance_results[1])
         print("Количество полиномов: ", performance_results[2])
         print("Время работы: ", performance_results[3])
