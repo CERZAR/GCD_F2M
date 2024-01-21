@@ -5,7 +5,7 @@ SCRIPT_SEQUENTIAL = 'PolynomialOperationsF2mCPU.py'
 SCRIPT_PARALLEL = 'PolynomialOperationsF2mGPU.py'
 SCRIPT_PLOT_MAKER = 'gcd_algorithms_performance.py'
 
-CONSTANTS = [(400, 20, 10)]
+CONSTANTS = [(500, 50, 10)]
 DEGREES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 AMOUNTS = [10, 100, 250, 500, 1000, 1500, 2000, 3000, 4000, 5000]
 
